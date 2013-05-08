@@ -106,8 +106,7 @@ int Wakeproto::getpacket(QByteArray data) {
 				data_started = 1;
 			}
 			if(data_started && bytes.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1) { // FEND + ADDR + CMD + N + DATA + CRC
-				//rx_data = bytes.mid(datastream,bytes.size()-5);
-				rx_data = bytes.mid(datastream,5);
+				rx_data = bytes.mid(datastream,bytes.size()-5);
 				foreach (unsigned char k, rx_data) {
 					rx_crc_calculated = crc8Table[rx_crc_calculated ^ k];
 				}
