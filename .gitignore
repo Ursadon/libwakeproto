@@ -14,4 +14,4 @@
 *.a
 
 # Qt stuff
-moc_*.c
+moc_*.cpp
