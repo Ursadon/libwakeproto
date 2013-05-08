@@ -39,6 +39,10 @@ const unsigned char crc8Table[256] = {
  
 Wakeproto::Wakeproto()
 {
+	packet_started = 0;
+	data_started = 0;
+	bytes = 0;
+	num_of_bytes = 0;
 	qDebug() << "Wakeproto module loaded" << endl;
 }
 
@@ -68,6 +72,80 @@ QByteArray Wakeproto::createpacket(unsigned char address, unsigned char cmd, QBy
 	return packet;
 }
 
+int Wakeproto::getpacket(QByteArray data) {
+	QByteArray rx_buffer = data;
+	QByteArray rx_data;
+	unsigned char rx_crc_calculated = 0xFF;
+	unsigned char rx_crc_actual = 0xFF;
+
+	foreach (unsigned char rx_byte, rx_buffer) {
+		if (rx_byte == FEND && packet_started == 1) {
+			// Получили FEND, но пакет ещё не окончен - сбрасываем данные
+			bytes.clear();
+			bytes.append(rx_byte);
+			num_of_bytes = 0;
+			rx_data.clear();
+			rx_buffer.clear();
+
+		} else if (packet_started) {
+			// Bytes destuffing
+			if(rx_byte == TFEND && bytes.endsWith(FESC)){
+				bytes.chop(1);
+				bytes.append(FEND);
+			} else if (rx_byte == TFESC && bytes.endsWith(FESC)) {
+				bytes.chop(1);
+				bytes.append(FESC);
+			} else {
+				bytes.append(rx_byte);
+			}
+			// We received full header?
+			if (bytes.size() == 4) {
+				// TODO: implement ADDR & CMD check
+				// fixme: what is 'n' ?
+				//num_of_bytes = bytes.at(n);
+				data_started = 1;
+			}
+			if(data_started && bytes.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1) { // FEND + ADDR + CMD + N + DATA + CRC
+				//rx_data = bytes.mid(datastream,bytes.size()-5);
+				rx_data = bytes.mid(datastream,5);
+				foreach (unsigned char k, rx_data) {
+					rx_crc_calculated = crc8Table[rx_crc_calculated ^ k];
+				}
+				rx_crc_actual = bytes.right(1).at(0);
+				if (rx_crc_actual != rx_crc_calculated) {
+					// TODO: inform on CRC error
+					//qDebug() << "[RX] CRC error" << QString::number(rx_crc_actual) << " (" << QString::number(rx_crc_calculated) << ")" << endl;
+					//rx_crc_error_count++;
+					// Send NACK
+					//bytes.clear();
+					//bytes.append(0xAE);
+					//send_packet(201,60,bytes);
+				} else {
+					// TODO: Handle received packet
+					//                    qDebug() << "[RX] FEND" << endl
+					//                             << "[RX] ADDR: " << QString::number(static_cast<unsigned char>(bytes.at(addr))) << endl
+					//                             << "[RX] CMD: " << QString::number(static_cast<unsigned char>(bytes.at(cmd))) << endl
+					//                             << "[RX] N: " << QString::number(static_cast<unsigned char>(bytes.at(n))) << endl
+					//                             << "[RX] DATA: " << rx_data.toHex() << endl
+					//                             << "[RX] CRC: " << QString::number(rx_crc_actual) << " (" << QString::number(rx_crc_calculated) << ")" << endl
+					//                             << "----------------------------" << endl;
+					//process_packet(bytes.at(cmd), rx_data);
+				}
+				data_started = 0;
+				packet_started = 0;
+				num_of_bytes = 0;
+				bytes.clear();
+				rx_data.clear();
+				rx_buffer.clear();
+			}
+		} else if (rx_byte == FEND) {
+			bytes.append(rx_byte);
+			packet_started = 1;
+		}
+	}
+	return 0;
+}
+
 QByteArray Wakeproto::stuffing(QByteArray packet) {
 	QByteArray stuffed_packet;
 	foreach (unsigned char byte, packet) {
@@ -87,3 +165,4 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
 	}
 	return stuffed_packet;
 }
+

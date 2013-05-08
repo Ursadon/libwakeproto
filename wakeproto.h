@@ -10,6 +10,11 @@ class Wakeproto : public QObject
 		Wakeproto();
 		void test();
 		QByteArray createpacket(unsigned char address, unsigned char cmd, QByteArray data);
+		int getpacket(QByteArray datastream);
 	private:
+		enum packet_offset { fend = 0, addr, cmd, n, datastream, crc };
+		bool packet_started, data_started;
+		unsigned char num_of_bytes;
+		QByteArray bytes;
 		QByteArray stuffing(QByteArray packet);
 };
