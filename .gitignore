@@ -12,3 +12,6 @@
 *.lai
 *.la
 *.a
+
+# Qt stuff
+moc_*.c
