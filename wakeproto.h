@@ -8,6 +8,7 @@ class Wakeproto : public QObject
 	Q_OBJECT
 	public:
 		Wakeproto();
+		~Wakeproto();
 		void test();
 		QByteArray createpacket(unsigned char address, unsigned char cmd, QByteArray data);
 		int getpacket(QByteArray datastream);
