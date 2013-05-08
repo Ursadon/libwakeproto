@@ -13,5 +13,9 @@
 *.la
 *.a
 
+# Other compilations
+debug/*
 # Qt stuff
 moc_*.cpp
+Makefile
+Makefile.*

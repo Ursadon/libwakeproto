@@ -1,9 +1,17 @@
 #include <QCoreApplication>
+#include <QtCore/qglobal.h>
+#if defined(WAKEPROTO_LIBRARY)
+#  define WAKEPROTOSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define WAKEPROTOSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+
 #define FEND 0xC0
 #define FESC 0xDB
 #define TFEND 0xDC
 #define TFESC 0xDD
-class Wakeproto : public QObject
+class WAKEPROTOSHARED_EXPORT Wakeproto : public QObject
 {
 	Q_OBJECT
 	public:
