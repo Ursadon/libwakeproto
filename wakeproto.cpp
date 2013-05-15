@@ -85,7 +85,6 @@ int Wakeproto::getpacket(QByteArray data) {
 
 	foreach (unsigned char rx_byte, rx_buffer) {
 		if (rx_byte == FEND && packet_started == 1) {
-			// Получили FEND, но пакет ещё не окончен - сбрасываем данные
 			qDebug() << "[Wakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
 			bytes.clear();
 			bytes.append(rx_byte);
@@ -176,5 +175,9 @@ unsigned int getcrc(QByteArray data) {
         foreach (unsigned char k, data) {
                 tx_crc = crc8Table[tx_crc ^ k];
         }
+<<<<<<< HEAD
 	return tx_crc;
+=======
+		return 0;
+>>>>>>> Changed project file
 }
