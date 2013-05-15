@@ -8,7 +8,6 @@ QT       -= gui
 
 TARGET = wakeproto
 TEMPLATE = lib
-<<<<<<< HEAD
 
 DEFINES += WAKEPROTO_LIBRARY
 
@@ -42,4 +41,3 @@ unix:!symbian {
     }
     INSTALLS += target
 }
->>>>>>> 62689a3e96b179889a2e8805be3ade342a95c878

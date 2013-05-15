@@ -161,18 +161,12 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
 	}
 	return stuffed_packet;
 }
-<<<<<<< HEAD
-=======
 
 unsigned int getcrc(QByteArray data) {
         unsigned char tx_crc = 0xFF;
         foreach (unsigned char k, data) {
                 tx_crc = crc8Table[tx_crc ^ k];
         }
-<<<<<<< HEAD
 	return tx_crc;
-=======
 		return 0;
->>>>>>> Changed project file
 }
->>>>>>> 62689a3e96b179889a2e8805be3ade342a95c878
