@@ -9,10 +9,7 @@ QT       -= gui
 TARGET = wakeproto
 TEMPLATE = lib
 
-DEFINES += WAKEPROTO_LIBRARY
-
 SOURCES += wakeproto.cpp
-
 HEADERS += wakeproto.h
 
 unix:!symbian {
@@ -24,20 +21,4 @@ unix:!symbian {
     INSTALLS += target
 }
 
-CONFIG += staticlib
-=======
-
-DEFINES += WAKEPROTO_LIBRARY
-
-SOURCES += wakeproto.cpp
-
-HEADERS += wakeproto.h
-
-unix:!symbian {
-    maemo5 {
-	target.path = /opt/usr/lib
-    } else {
-	target.path = /usr/lib
-    }
-    INSTALLS += target
-}
+CONFIG += shared
