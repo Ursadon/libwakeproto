@@ -23,3 +23,5 @@ unix:!symbian {
     }
     INSTALLS += target
 }
+
+CONFIG += staticlib
