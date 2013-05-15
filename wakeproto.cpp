@@ -176,4 +176,5 @@ unsigned int getcrc(QByteArray data) {
         foreach (unsigned char k, data) {
                 tx_crc = crc8Table[tx_crc ^ k];
         }
+	return tx_crc;
 }
