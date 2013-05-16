@@ -6,12 +6,11 @@
 
 QT       -= gui
 
-#TARGET = wakeproto
 TEMPLATE = lib
 
 SOURCES += wakeproto.cpp
 HEADERS += wakeproto.h
-
+DEFINES += LIBWAKEPROTO_LIBRARY
 unix:!symbian {
     maemo5 {
 	target.path = /opt/usr/lib
