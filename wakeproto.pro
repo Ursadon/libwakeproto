@@ -6,7 +6,7 @@
 
 QT       -= gui
 
-TARGET = wakeproto
+#TARGET = wakeproto
 TEMPLATE = lib
 
 SOURCES += wakeproto.cpp
@@ -21,4 +21,3 @@ unix:!symbian {
     INSTALLS += target
 }
 
-CONFIG += shared
