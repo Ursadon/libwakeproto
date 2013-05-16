@@ -5,5 +5,9 @@ CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += main.cpp
 
-LIBS += -L/home/nikolay/Projects/qt5-wakeproto/ -lwakeproto
-INCLUDEPATH += /home/nikolay/Projects/qt5-wakeproto/
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../release/ -lwakeproto
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../debug/ -lwakeproto
+else:unix: LIBS += -L$$PWD/../../ -lwakeproto
+
+INCLUDEPATH += $$PWD/../../
+DEPENDPATH += $$PWD/../../

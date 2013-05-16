@@ -7,7 +7,6 @@
 QT       -= gui
 
 TEMPLATE = lib
-
 SOURCES += wakeproto.cpp
 HEADERS += wakeproto.h
 DEFINES += LIBWAKEPROTO_LIBRARY
