@@ -117,13 +117,17 @@ int Wakeproto::getpacket(QByteArray data) {
 					qDebug() << "[Wakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
 				} else {
 					// TODO: Handle received packet
-					                    qDebug() << "[RX] FEND" << endl
-												 << "[RX] ADDR: " << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::address))) << endl
-												 << "[RX] CMD: " << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::cmd))) << endl
-												 << "[RX] N: " << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::numofbytes))) << endl
-												 << "[RX] DATA: " << rx_temp_packet.mid(Wakeproto::datastream,rx_temp_packet.size()-Wakeproto::crc) << endl
-					                             << "[RX] CRC: " << QString::number(rx_crc_actual) << " (" << QString::number(rx_crc_calculated) << ")" << endl
-					                             << "----------------------------" << endl;
+								
+					                    qDebug()
+								 << "----------------------------------" << endl
+								 << "[Wakeproto][INFO]: Recieved packet" << endl
+								 << "\tADDR:\t\t" << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::address))) << endl
+								 << "\tCMD:\t\t" << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::cmd))) << endl
+								 << "\tN:\t\t" << QString::number(static_cast<unsigned char>(rx_temp_packet.at(Wakeproto::numofbytes))) << endl
+								 << "\tDATA:\t\t" << rx_temp_packet.mid(Wakeproto::datastream,rx_temp_packet.size()-Wakeproto::crc) << endl
+					                         << "\tCRC recieved:\t" << QString::number(rx_crc_actual) << endl
+								 << "\tCRC calculated:\t" << QString::number(rx_crc_calculated) <<  endl
+					                         << "----------------------------------" << endl;
 					//process_packet(bytes.at(cmd), rx_data);
 				}
 				data_started = 0;
@@ -134,7 +138,7 @@ int Wakeproto::getpacket(QByteArray data) {
 				data.clear();
 			}
 		} else if (rx_byte == FEND) {
-			qDebug() << "[Wakeproto][INFO]: Received FEND";
+			//qDebug() << "[Wakeproto][INFO]: Received FEND";
 			rx_temp_packet.append(rx_byte);
 			packet_started = 1;
 		}
