@@ -27,4 +27,6 @@ class LIBWAKEPROTO_EXPORT Wakeproto : public QObject
 		QByteArray rx_temp_packet, rx_packet_data;
 		QByteArray stuffing(QByteArray packet);
 		void dump_packet(QByteArray packet);
+	signals:
+		void packetReceived();
 };

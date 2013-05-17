@@ -117,7 +117,8 @@ int Wakeproto::getpacket(QByteArray data) {
 					qDebug() << "[Wakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
 				} else {
 					// TODO: Handle received packet
-					dump_packet(rx_temp_packet);				
+					dump_packet(rx_temp_packet);
+					emit packetReceived();
 					//process_packet(bytes.at(cmd), rx_data);
 				}
 				data_started = 0;
@@ -155,6 +156,7 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
 	}
 	return stuffed_packet;
 }
+
 /*
 unsigned int getcrc(QByteArray data) {
         unsigned char tx_crc = 0xFF;
@@ -165,6 +167,7 @@ unsigned int getcrc(QByteArray data) {
 		return 0;
 }
 */
+
 void Wakeproto::dump_packet(QByteArray packet) {
 	QString hexdata;
 	QByteArray data = packet.mid(Wakeproto::datastream,rx_temp_packet.size()-Wakeproto::crc);
@@ -182,7 +185,7 @@ void Wakeproto::dump_packet(QByteArray packet) {
         }
 	qDebug()
 	<< "---------------------------------------" << endl
-        << "[Wakeproto][INFO]: Recieved packet" << endl
+        << "[Wakeproto][INFO]: Received packet" << endl
         << "ADDR:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::address))) << endl
         << "CMD:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::cmd))) << endl
         << "N:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::numofbytes))) << endl

@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
 	QByteArray senddata;
 
 	sx.test();
-
 	senddata.append(argv[1]);
 	QByteArray data;
 	data = sx.createpacket(201,2,senddata);
