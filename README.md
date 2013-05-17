@@ -1,4 +1,4 @@
-qt5-wakeproto
+libwakeproto
 =============
 
 Wake protocol library for Qt5.
