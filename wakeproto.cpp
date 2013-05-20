@@ -118,13 +118,12 @@ int Wakeproto::getpacket(QByteArray data) {
 				} else {
 					// TODO: Handle received packet
 					dump_packet(rx_temp_packet);
-					emit packetReceived();
+					emit packetReceived(rx_temp_packet);
 					//process_packet(bytes.at(cmd), rx_data);
 				}
 				data_started = 0;
 				packet_started = 0;
 				num_of_bytes = 0;
-				rx_temp_packet.clear();
 				rx_temp_packet.clear();
 				data.clear();
 			}
