@@ -156,7 +156,7 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
 	return stuffed_packet;
 }
 
-/*
+
 unsigned int getcrc(QByteArray data) {
         unsigned char tx_crc = 0xFF;
         foreach (unsigned char k, data) {
@@ -165,7 +165,6 @@ unsigned int getcrc(QByteArray data) {
 	return tx_crc;
 		return 0;
 }
-*/
 
 void Wakeproto::dump_packet(QByteArray packet) {
 	QString hexdata;

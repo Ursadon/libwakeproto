@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 looptest::looptest()
 {
         qDebug() << "[LoopTest][INFO]: Program started" << endl;
-	Wakeproto sx;
+	Wakeproto sx;;
 	connect(&sx,SIGNAL(packetReceived(QByteArray)),this,SLOT(packet_rcvd(QByteArray)));
 
        	sx.test();
@@ -29,5 +29,6 @@ looptest::~looptest()
 void looptest::packet_rcvd(QByteArray packet)
 {
         qDebug() << "[LoopTest][INFO]: Packet received!" << endl;
+	sx.dump_packet(packet);
 }
 
