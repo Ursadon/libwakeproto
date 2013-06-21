@@ -16,22 +16,22 @@
 
 class LIBWAKEPROTO_EXPORT Wakeproto : public QObject
 {
-	Q_OBJECT
-	public:
-		Wakeproto();
-		~Wakeproto();
-		void test();
-		QByteArray createpacket(unsigned char address, unsigned char cmd, QByteArray data);
-		int getpacket(QByteArray datastream);
-		void dump_packet(QByteArray packet);
-	private:
-		enum PacketHeader { fend = 0, address, cmd, numofbytes, datastream, crc};
-		bool packet_started, data_started;
-		unsigned char num_of_bytes;
-		QByteArray rx_temp_packet, rx_packet_data;
-		QByteArray stuffing(QByteArray packet);
-	signals:
-		void packetReceived(QByteArray packet);
+    Q_OBJECT
+public:
+    Wakeproto();
+    ~Wakeproto();
+    void test();
+    QByteArray createpacket(unsigned char address, unsigned char cmd, QByteArray data);
+    int getpacket(QByteArray datastream);
+    void dump_packet(QByteArray packet);
+private:
+    enum PacketHeader { fend = 0, address, cmd, numofbytes, datastream, crc};
+    bool packet_started, data_started;
+    unsigned char num_of_bytes;
+    QByteArray rx_temp_packet, rx_packet_data;
+    QByteArray stuffing(QByteArray packet);
+signals:
+    void packetReceived(QByteArray packet);
 };
 
 #endif // _WAKEPROTO_H

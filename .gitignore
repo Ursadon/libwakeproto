@@ -15,7 +15,10 @@
 
 # Other compilations
 debug/*
+example/loopback/debug/*
 # Qt stuff
 moc_*.cpp
 Makefile
 Makefile.*
+*.pro.user
+*.pro.user.*
