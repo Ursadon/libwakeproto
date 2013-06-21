@@ -1,3 +1,29 @@
+/**
+ * @file
+ * @author  Nikolay Lomakin <lomakin90@yandex.ru>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * Copyright (c) 2013, Nikolay Lomakin <lomakin90@yandex.ru>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * The time class represents a moment of time.
+ */
+
 #include <QCoreApplication>
 #include <QDebug>
 #include "wakeproto.h"
@@ -43,7 +69,7 @@ Wakeproto::Wakeproto()
     data_started = 0;
     rx_temp_packet = 0;
     num_of_bytes = 0;
-    qDebug() << "[Wakeproto][INFO]: Wakeproto module loaded" << endl;
+    qDebug() << "[libwakeproto][INFO]: Wakeproto module loaded" << endl;
 }
 
 Wakeproto::~Wakeproto()
@@ -51,10 +77,21 @@ Wakeproto::~Wakeproto()
 
 }
 
+/**
+ * Just test.
+ */
 void Wakeproto::test() {
-    qDebug() << "[Wakeproto][INFO]: Wakeproto test" << endl;
+    qDebug() << "[libwakeproto][INFO]: Wakeproto test" << endl;
 }
 
+/**
+ * Create packet, based on input data
+ *
+ * @param address Destanation device address
+ * @param cmd Command number
+ * @param data A QByteArray of data to send
+ * @return QByteArray with data in wake packet
+ */
 QByteArray Wakeproto::createpacket(unsigned char address, unsigned char cmd, QByteArray data) {
     QByteArray packet;
     unsigned char tx_crc = 0xFF;
@@ -77,13 +114,19 @@ QByteArray Wakeproto::createpacket(unsigned char address, unsigned char cmd, QBy
     return packet;
 }
 
+/**
+ * Parse input stream into packet
+ *
+ * @param data QByteArray of data to parse
+ * @return No return
+ */
 int Wakeproto::getpacket(QByteArray data) {
     unsigned char rx_crc_calculated = 0xFF;
     unsigned char rx_crc_actual = 0xFF;
 
     foreach (unsigned char rx_byte, data) {
         if (rx_byte == FEND && packet_started == 1) {
-            qDebug() << "[Wakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
+            qDebug() << "[libwakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
             data_started = 0;
             num_of_bytes = 0;
             rx_temp_packet.clear();
@@ -114,10 +157,10 @@ int Wakeproto::getpacket(QByteArray data) {
                 }
                 rx_crc_actual = rx_temp_packet.right(1).at(0);
                 if (rx_crc_actual != rx_crc_calculated) {
-                    qDebug() << "[Wakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
+                    qDebug() << "[libwakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
                 } else {
                     // TODO: Handle received packet
-                    dump_packet(rx_temp_packet);
+                    //dump_packet(rx_temp_packet);
                     emit packetReceived(rx_temp_packet);
                     //process_packet(bytes.at(cmd), rx_data);
                 }
@@ -128,7 +171,7 @@ int Wakeproto::getpacket(QByteArray data) {
                 data.clear();
             }
         } else if (rx_byte == FEND) {
-            //qDebug() << "[Wakeproto][INFO]: Received FEND";
+            //qDebug() << "[libwakeproto][INFO]: Received FEND";
             rx_temp_packet.append(rx_byte);
             packet_started = 1;
         }
@@ -136,6 +179,12 @@ int Wakeproto::getpacket(QByteArray data) {
     return 0;
 }
 
+/**
+ * Stuff bytes in packet
+ *
+ * @param data QByteArray wake packet
+ * @return QByteArray wake packet (stuffed)
+ */
 QByteArray Wakeproto::stuffing(QByteArray packet) {
     QByteArray stuffed_packet;
     foreach (unsigned char byte, packet) {
@@ -156,7 +205,12 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
     return stuffed_packet;
 }
 
-
+/**
+ * Calculate CRC8 checksum
+ *
+ * @param data A QByteArray data
+ * @return CRC8 checksum
+ */
 unsigned int getcrc(QByteArray data) {
     unsigned char tx_crc = 0xFF;
     foreach (unsigned char k, data) {
@@ -166,6 +220,11 @@ unsigned int getcrc(QByteArray data) {
     return 0;
 }
 
+/**
+ * Print packet
+ *
+ * @param packet QByteArray wake packet
+ */
 void Wakeproto::dump_packet(QByteArray packet) {
     QString hexdata;
     QByteArray data = packet.mid(Wakeproto::datastream,rx_temp_packet.size()-Wakeproto::crc);
@@ -183,7 +242,7 @@ void Wakeproto::dump_packet(QByteArray packet) {
     }
     qDebug()
             << "---------------------------------------" << endl
-            << "[Wakeproto][INFO]: Received packet" << endl
+            << "[libwakeproto][INFO]: Received packet" << endl
             << "ADDR:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::address))) << endl
             << "CMD:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::cmd))) << endl
             << "N:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::numofbytes))) << endl
