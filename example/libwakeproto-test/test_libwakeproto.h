@@ -18,6 +18,7 @@ private slots: // must be private
     void lwp_test_tx();
     void lwp_test_rx();
     void lwp_test_rx_continuous();
+    void lwp_test_rx_bruteforce();
 };
 
 #endif // TEST_LIBWAKEPROTO_H

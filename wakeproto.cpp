@@ -69,6 +69,7 @@ Wakeproto::Wakeproto()
     data_started = 0;
     rx_temp_packet = 0;
     num_of_bytes = 0;
+    stuffed_bytes = 0;
     qDebug() << "[libwakeproto][INFO]: Wakeproto module loaded" << endl;
 }
 
@@ -97,7 +98,7 @@ QByteArray Wakeproto::createpacket(unsigned char address, unsigned char cmd, QBy
     unsigned char tx_crc = 0xFF;
     tx_crc = crc8Table[tx_crc ^ FEND];
     tx_crc = crc8Table[tx_crc ^ address];
-    tx_crc = crc8Table[tx_crc ^ cmd];
+    tx_crc = crc8Table[tx_crc ^ cmd];;
     tx_crc = crc8Table[tx_crc ^ data.size()];
     foreach (unsigned char k, data) {
         tx_crc = crc8Table[tx_crc ^ k];
@@ -129,11 +130,16 @@ int Wakeproto::getpacket(QByteArray data) {
             qDebug() << "[libwakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
             data_started = 0;
             num_of_bytes = 0;
+            stuffed_bytes = 0;
             rx_temp_packet.clear();
             packet_started = 1;
             rx_temp_packet.append(rx_byte);
         } else if (packet_started) {
             // Bytes destuffing and accumulating
+            if(rx_byte == FESC) {
+                stuffed_bytes++;
+                break;
+            }
             if(rx_byte == TFEND && rx_temp_packet.endsWith(FESC)){
                 rx_temp_packet.chop(1);
                 rx_temp_packet.append(FEND);
@@ -143,21 +149,32 @@ int Wakeproto::getpacket(QByteArray data) {
             } else {
                 rx_temp_packet.append(rx_byte);
             }
+
             // We received full header?
-            if (rx_temp_packet.size() == 4) {
+            if ((rx_temp_packet.size() == 4)) {
                 // TODO: implement ADDR & CMD check
                 num_of_bytes = rx_temp_packet.at(Wakeproto::numofbytes);
                 data_started = 1;
             }
-            if(data_started && (rx_temp_packet.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1)) { // FEND + ADDR + CMD + N + DATA + CRC
-                // Full packet received
+
+            // Full packet received
+            if(data_started && (rx_temp_packet.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1 + stuffed_bytes)) { // FEND + ADDR + CMD + N + DATA + CRC + if CRC is stuffed, then lenght incemented by 1
                 // Check CRC
                 foreach (unsigned char k, rx_temp_packet.left(rx_temp_packet.size()-1)) {
                     rx_crc_calculated = crc8Table[rx_crc_calculated ^ k];
                 }
                 rx_crc_actual = rx_temp_packet.right(1).at(0);
-                if (rx_crc_actual != rx_crc_calculated) {
+
+                if (rx_crc_actual != getcrc(rx_temp_packet.left(rx_temp_packet.size()-1))) {
                     qDebug() << "[libwakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
+                    dump_packet(rx_temp_packet);
+                    data_started = 0;
+                    packet_started = 0;
+                    num_of_bytes = 0;
+                    stuffed_bytes = 0;
+                    rx_temp_packet.clear();
+                    data.clear();
+                    return 1;
                 } else {
                     // TODO: Handle received packet
                     //dump_packet(rx_temp_packet);
@@ -167,6 +184,7 @@ int Wakeproto::getpacket(QByteArray data) {
                 data_started = 0;
                 packet_started = 0;
                 num_of_bytes = 0;
+                stuffed_bytes = 0;
                 rx_temp_packet.clear();
                 data.clear();
             }
@@ -211,13 +229,12 @@ QByteArray Wakeproto::stuffing(QByteArray packet) {
  * @param data A QByteArray data
  * @return CRC8 checksum
  */
-unsigned int getcrc(QByteArray data) {
+unsigned int Wakeproto::getcrc(QByteArray data) {
     unsigned char tx_crc = 0xFF;
     foreach (unsigned char k, data) {
         tx_crc = crc8Table[tx_crc ^ k];
     }
     return tx_crc;
-    return 0;
 }
 
 /**
@@ -246,7 +263,7 @@ void Wakeproto::dump_packet(QByteArray packet) {
             << "ADDR:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::address))) << endl
             << "CMD:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::cmd))) << endl
             << "N:\t\t" << QString::number(static_cast<unsigned char>(packet.at(Wakeproto::numofbytes))) << endl
-            << "CRC calculated:\t" << QString::number(static_cast<unsigned char>(packet.at(packet.count() - 1))) <<  endl
+            << "CRC calculated:\t" << QString::number(static_cast<unsigned char>(packet.at(packet.size() - 1))) <<  endl
             << "DATA (raw):\t\t" << endl
             << qPrintable(QString(data)) << endl
             << "DATA (hex):\t\t" << endl

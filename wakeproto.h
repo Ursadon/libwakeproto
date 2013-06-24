@@ -27,9 +27,10 @@ public:
 private:
     enum PacketHeader { fend = 0, address, cmd, numofbytes, datastream, crc};
     bool packet_started, data_started;
-    unsigned char num_of_bytes;
+    unsigned char num_of_bytes, stuffed_bytes;
     QByteArray rx_temp_packet, rx_packet_data;
     QByteArray stuffing(QByteArray packet);
+    unsigned int getcrc(QByteArray data);
 signals:
     void packetReceived(QByteArray packet);
 };
