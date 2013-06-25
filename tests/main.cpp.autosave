@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2013, Nikolay Lomakin <lomakin90@yandex.ru>
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -10,7 +10,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -23,37 +23,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QtCore/QCoreApplication>
-#include <QDebug>
+#include <QCoreApplication>
+#include <QTest>
+#include "test_libwakeproto.h"
 #include <wakeproto.h>
-#include "loopback.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    looptest lt;
-    return app.exec();
+    QCoreApplication a(argc, argv);
+    QTest::qExec(new Test_libwakeproto, argc, argv);
+    return a.exec();
 }
-looptest::looptest()
-{
-    qDebug() << "[LoopTest][INFO]: Program started" << endl;
-    Wakeproto sx;
-    connect(&sx,SIGNAL(packetReceived(QByteArray)),this,SLOT(packet_rcvd(QByteArray)));
-    QByteArray data;
-    data = sx.createpacket(219,220,"senddata");
-    sx.getpacket(data);
-//    data = sx.createpacket(220,220,"senddata");
-    sx.getpacket(data);
-}
-
-looptest::~looptest()
-{
-    qDebug() << "[LoopTest][INFO]: Running ~looptest()" << endl;
-}
-
-void looptest::packet_rcvd(QByteArray packet)
-{
-    qDebug() << "[LoopTest][INFO]: Packet received!" << endl;
-    sx.dump_packet(packet);
-}
-
