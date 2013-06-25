@@ -3,7 +3,7 @@ libwakeproto
 
 Wake protocol library for Qt5.
 
-Wake is a protocl similar to SLIP. Protocol used in embedded applications.
+Wake is a protocol similar to SLIP. Protocol used in embedded applications.
 
 Description (HTML): http://caxapa.ru/lib/wake/
 
