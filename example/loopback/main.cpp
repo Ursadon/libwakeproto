@@ -14,8 +14,9 @@ looptest::looptest()
     Wakeproto sx;
     connect(&sx,SIGNAL(packetReceived(QByteArray)),this,SLOT(packet_rcvd(QByteArray)));
     QByteArray data;
-    data = sx.createpacket(139,2,"senddata");
-    qDebug() << "Packet send: ["  << data.size() <<"] "  << data ;
+    data = sx.createpacket(219,220,"senddata");
+    sx.getpacket(data);
+//    data = sx.createpacket(220,220,"senddata");
     sx.getpacket(data);
 }
 

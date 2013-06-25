@@ -43,14 +43,16 @@ void Test_libwakeproto::lwp_test_rx_bruteforce()
 {
     Wakeproto *lwp = new Wakeproto;
     QSignalSpy stateSpy(lwp, SIGNAL( packetReceived(QByteArray) ) );
+    QByteArray packet;
     QVERIFY( stateSpy.isValid() );
     for (unsigned int i = 0; i < 256; i++) {
-        qDebug() << i << endl;
-        QByteArray packet = lwp->createpacket(i,2,"senddata");
-        lwp->getpacket(packet);
-        if (lwp->getpacket(packet) == 1) {
-            QFAIL("error");
+        for (unsigned int j = 0; j < 256; j++) {
+            packet = lwp->createpacket(j,i,"senddata");
+            if (lwp->getpacket(packet) == 1) {
+                qDebug() << "j= " << j << " i= " << i << endl;
+                QFAIL("Error: CRC mismatch");
+            }
         }
     }
-    QCOMPARE( stateSpy.count(), 256 );
+    QCOMPARE( stateSpy.count(), 256*256 );
 }

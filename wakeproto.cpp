@@ -69,7 +69,7 @@ Wakeproto::Wakeproto()
     data_started = 0;
     rx_temp_packet = 0;
     num_of_bytes = 0;
-    stuffed_bytes = 0;
+    byte_stuffing = 0;
     qDebug() << "[libwakeproto][INFO]: Wakeproto module loaded" << endl;
 }
 
@@ -128,24 +128,27 @@ int Wakeproto::getpacket(QByteArray data) {
     foreach (unsigned char rx_byte, data) {
         if (rx_byte == FEND && packet_started == 1) {
             qDebug() << "[libwakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
+            dump_packet(rx_temp_packet);
+            return 1;
             data_started = 0;
             num_of_bytes = 0;
-            stuffed_bytes = 0;
+            byte_stuffing = 0;
             rx_temp_packet.clear();
             packet_started = 1;
             rx_temp_packet.append(rx_byte);
         } else if (packet_started) {
             // Bytes destuffing and accumulating
             if(rx_byte == FESC) {
-                stuffed_bytes++;
-                break;
+                byte_stuffing = true;
             }
-            if(rx_byte == TFEND && rx_temp_packet.endsWith(FESC)){
+            if(rx_byte == TFEND && byte_stuffing == true){
                 rx_temp_packet.chop(1);
                 rx_temp_packet.append(FEND);
-            } else if (rx_byte == TFESC && rx_temp_packet.endsWith(FESC)) {
+                byte_stuffing = false;
+            } else if (rx_byte == TFESC && byte_stuffing == true) {
                 rx_temp_packet.chop(1);
                 rx_temp_packet.append(FESC);
+                byte_stuffing = false;
             } else {
                 rx_temp_packet.append(rx_byte);
             }
@@ -158,7 +161,7 @@ int Wakeproto::getpacket(QByteArray data) {
             }
 
             // Full packet received
-            if(data_started && (rx_temp_packet.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1 + stuffed_bytes)) { // FEND + ADDR + CMD + N + DATA + CRC + if CRC is stuffed, then lenght incemented by 1
+            if(data_started && (rx_temp_packet.size() == 1 + 1 + 1 + 1 + num_of_bytes + 1 + byte_stuffing)) { // FEND + ADDR + CMD + N + DATA + CRC + if CRC is stuffed, then lenght incemented by 1
                 // Check CRC
                 foreach (unsigned char k, rx_temp_packet.left(rx_temp_packet.size()-1)) {
                     rx_crc_calculated = crc8Table[rx_crc_calculated ^ k];
@@ -171,7 +174,7 @@ int Wakeproto::getpacket(QByteArray data) {
                     data_started = 0;
                     packet_started = 0;
                     num_of_bytes = 0;
-                    stuffed_bytes = 0;
+                    byte_stuffing = 0;
                     rx_temp_packet.clear();
                     data.clear();
                     return 1;
@@ -184,7 +187,7 @@ int Wakeproto::getpacket(QByteArray data) {
                 data_started = 0;
                 packet_started = 0;
                 num_of_bytes = 0;
-                stuffed_bytes = 0;
+                byte_stuffing = 0;
                 rx_temp_packet.clear();
                 data.clear();
             }
