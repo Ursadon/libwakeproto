@@ -18,6 +18,7 @@
 # Other compilations
 debug/*
 example/loopback/debug/*
+
 # Qt stuff
 moc_*.cpp
 qrc_*.cpp
@@ -26,3 +27,4 @@ Makefile.*
 *.pro.user
 *.pro.user.*
 *-build-*
+*.autosave

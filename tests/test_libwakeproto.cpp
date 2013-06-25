@@ -27,6 +27,7 @@
 #include <QTest>
 #include <QSignalSpy>
 #include <QDebug>
+
 Test_libwakeproto::Test_libwakeproto(QObject *parent) :
     QObject(parent)
 {
