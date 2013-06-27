@@ -53,7 +53,7 @@ void WakeServer::slotReadClient()
     os << "HTTP/1.0 200 Ok\r\n"
           "Content-Type: text/html; charset=\"utf-8\"\r\n"
           "\r\n"
-          "<h1>Nothing to see here</h1>\n"
+          "<h1>WakeServer</h1>\n"
        << QDateTime::currentDateTime().toString() << "\n";
     qDebug() << "ReadClient:"+clientSocket->readAll()+"\n\r";
     // Если нужно закрыть сокет
