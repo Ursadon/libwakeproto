@@ -5,6 +5,8 @@
 WakeServer::WakeServer(QObject *parent) :
     QObject(parent)
 {
+    wproto = new Wakeproto();
+    connect(wproto,SIGNAL(packetReceived(QByteArray)),this,SLOT(packet_rcvd(QByteArray)));
     QTextCodec* codec = QTextCodec::codecForName("UTF8");
     QTextCodec::setCodecForLocale(codec);
 
@@ -25,7 +27,7 @@ WakeServer::~WakeServer()
 void WakeServer::packet_rcvd(QByteArray packet)
 {
     qDebug() << "[WakeServer][INFO]: Packet received!" << endl;
-    //sx.dump_packet(packet);
+    wproto->dump_packet(packet);
 }
 
 void WakeServer::newuser()
@@ -48,15 +50,16 @@ void WakeServer::slotReadClient()
 {
     QTcpSocket* clientSocket = (QTcpSocket*)sender();
     int idusersocs=clientSocket->socketDescriptor();
-    QTextStream os(clientSocket);
-    os.setAutoDetectUnicode(true);
-    os << "HTTP/1.0 200 Ok\r\n"
-          "Content-Type: text/html; charset=\"utf-8\"\r\n"
-          "\r\n"
-          "<h1>WakeServer</h1>\n"
-       << QDateTime::currentDateTime().toString() << "\n";
-    qDebug() << "ReadClient:"+clientSocket->readAll()+"\n\r";
-    // Если нужно закрыть сокет
+    wproto->getpacket(clientSocket->readAll());
+//    QTextStream os(clientSocket);
+//    os.setAutoDetectUnicode(true);
+//    os << "HTTP/1.0 200 Ok\r\n"
+//          "Content-Type: text/html; charset=\"utf-8\"\r\n"
+//          "\r\n"
+//          "<h1>WakeServer</h1>\n"
+//       << QDateTime::currentDateTime().toString() << "\n";
+//    qDebug() << "ReadClient:"+clientSocket->readAll()+"\n\r";
+//    // Если нужно закрыть сокет
     clientSocket->close();
     SClients.remove(idusersocs);
     //    while(tcpSocket->canReadLine())

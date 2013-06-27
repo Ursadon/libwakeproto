@@ -16,6 +16,7 @@ private:
     QTcpServer *tcpServer;
     QTcpSocket *tcpSocket;
     QMap<int,QTcpSocket *> SClients;
+    Wakeproto *wproto;
 signals:
     
 private slots:
