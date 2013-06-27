@@ -15,6 +15,7 @@ signals:
 
 private:
     QTcpSocket *tcpSocket;
+    Wakeproto *wproto;
 
 public slots:
 
