@@ -7,8 +7,6 @@ WakeClient::WakeClient(QObject *parent) :
 {
     QByteArray data;
     wproto = new Wakeproto();
-    connect(wproto,SIGNAL(packetReceived(QByteArray)),this,SLOT(packet_rcvd(QByteArray)));
-
 
     tcpSocket = new QTcpSocket(this);
     tcpSocket->connectToHost("localhost",8888);
