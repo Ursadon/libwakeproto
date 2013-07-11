@@ -1,0 +1,1 @@
+copy E:\Dropbox\Priv\Projects\qt5-wakeproto\debug\libwakeproto.a E:\Dropbox\Priv\Projects\qt5-wakeproto\debug\libwakeproto.lib

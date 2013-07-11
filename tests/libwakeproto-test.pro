@@ -11,8 +11,12 @@ QT       -= gui
 TARGET = libwakeproto-test
 CONFIG   += console
 CONFIG   -= app_bundle
-
+CONFIG	+= debug
 TEMPLATE = app
+
+CLEANDIRS = "debug release"
+CLEANFILES += $$TARGET
+QMAKE_CLEAN += -r $$CLEANDIRS $$CLEANFILES
 
 
 SOURCES += main.cpp \
@@ -21,9 +25,15 @@ SOURCES += main.cpp \
 HEADERS += \
     test_libwakeproto.h
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../release/ -lwakeproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../debug/ -lwakeproto
-else:unix: LIBS += -L$$PWD/../../ -lwakeproto
+CONFIG(debug, debug|release) {
+	LIBS += -L$$PWD/../src/debug/ -lwakeproto
+} else {
+	LIBS += -L$$PWD/../src/release/ -lwakeproto
+}
 
-INCLUDEPATH += $$PWD/../
-DEPENDPATH += $$PWD/../
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../release/src/ -lwakeproto
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../debug/src/ -lwakeproto
+#else:unix: LIBS += -L$$PWD/../../src/ -lwakeproto
+
+INCLUDEPATH += $$PWD/../src/
+DEPENDPATH += $$PWD/../src/

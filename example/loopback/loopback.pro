@@ -2,13 +2,21 @@ QT       -= gui
 
 TARGET = loopback
 CONFIG -= app_bundle
+CONFIG  += debug
 TEMPLATE = app
 SOURCES += main.cpp
 HEADERS += loopback.h
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../release/ -lwakeproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../debug/ -lwakeproto
-else:unix: LIBS += -L$$PWD/../../ -lwakeproto
+CLEANDIRS = "debug release"
+CLEANFILES += $$TARGET
+QMAKE_CLEAN += -r $$CLEANDIRS $$CLEANFILES
 
-INCLUDEPATH += $$PWD/../../
-DEPENDPATH += $$PWD/../../
+CONFIG(debug, debug|release) {
+        LIBS += -L$$PWD/../../src/debug/ -lwakeproto
+} else {
+        LIBS += -L$$PWD/../../src/release/ -lwakeproto
+}
+
+INCLUDEPATH += $$PWD/../../src/
+DEPENDPATH += $$PWD/../../src/
+

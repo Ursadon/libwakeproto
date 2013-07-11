@@ -11,19 +11,23 @@ QT       -= gui
 TARGET = WakeClient
 CONFIG   += console
 CONFIG   -= app_bundle
-
+CONFIG	+= debug
 TEMPLATE = app
-
+CLEANDIRS = "debug release"
+CLEANFILES += $$TARGET
+QMAKE_CLEAN += -r $$CLEANDIRS $$CLEANFILES
 
 SOURCES += main.cpp \
     wakeclient.cpp
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../release/ -lwakeproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../debug/ -lwakeproto
-else:unix: LIBS += -L$$PWD/../../ -lwakeproto
+CONFIG(debug, debug|release) {
+        LIBS += -L$$PWD/../../src/debug/ -lwakeproto
+} else {
+        LIBS += -L$$PWD/../../src/release/ -lwakeproto
+}
 
-INCLUDEPATH += $$PWD/../../
-DEPENDPATH += $$PWD/../../
+INCLUDEPATH += $$PWD/../../src/
+DEPENDPATH += $$PWD/../../src/
 
 HEADERS += \
     wakeclient.h
