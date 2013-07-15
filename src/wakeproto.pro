@@ -31,3 +31,7 @@ CONFIG(debug, debug|release) {
     DESTDIR = release
     TARGET = wakeprotod
 }
+
+win32: SONAME=dll
+else:  SONAME=so
+

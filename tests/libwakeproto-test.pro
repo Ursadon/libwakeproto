@@ -31,9 +31,5 @@ CONFIG(debug, debug|release) {
 	LIBS += -L$$PWD/../src/release/ -lwakeproto
 }
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../release/src/ -lwakeproto
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../debug/src/ -lwakeproto
-#else:unix: LIBS += -L$$PWD/../../src/ -lwakeproto
-
 INCLUDEPATH += $$PWD/../src/
 DEPENDPATH += $$PWD/../src/
