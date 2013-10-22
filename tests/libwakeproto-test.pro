@@ -27,8 +27,10 @@ HEADERS += \
 
 CONFIG(debug, debug|release) {
 	LIBS += -L$$PWD/../src/debug/ -lwakeproto
+	QMAKE_POST_LINK = $$PWD/$${TARGET}
 } else {
 	LIBS += -L$$PWD/../src/release/ -lwakeproto
+	QMAKE_POST_LINK = $$PWD/$${TARGET}
 }
 
 INCLUDEPATH += $$PWD/../src/
