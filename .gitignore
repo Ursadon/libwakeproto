@@ -20,6 +20,7 @@ debug/*
 example/loopback/debug/*
 example/WakeClient/debug/*
 example/WakeServer/debug/*
+tests/libwakeproto-test
 
 # Qt stuff
 moc_*.cpp
