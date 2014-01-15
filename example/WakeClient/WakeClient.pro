@@ -22,8 +22,10 @@ SOURCES += main.cpp \
 
 CONFIG(debug, debug|release) {
         LIBS += -L$$PWD/../../src/debug/ -lwakeproto
+	DESTDIR = debug
 } else {
         LIBS += -L$$PWD/../../src/release/ -lwakeproto
+	DESTDIR = release
 }
 
 INCLUDEPATH += $$PWD/../../src/

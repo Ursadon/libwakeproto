@@ -18,6 +18,8 @@
 # Other compilations
 debug/*
 example/loopback/debug/*
+example/WakeClient/debug/*
+example/WakeServer/debug/*
 
 # Qt stuff
 moc_*.cpp
