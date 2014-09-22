@@ -128,13 +128,13 @@ int Wakeproto::getpacket(QByteArray data) {
         if (rx_byte == FEND && packet_started == 1) {
             qDebug() << "[libwakeproto][ERROR]: received FEND, but previous packet not ended! Clearing buffer.";
             dump_packet(rx_temp_packet);
-            return 1;
             data_started = false;
+            packet_started = 0;
             num_of_bytes = 0;
             byte_stuffing = 0;
             rx_temp_packet.clear();
-            packet_started = 1;
-            rx_temp_packet.append(rx_byte);
+            data.clear();
+            return 2;
         } else if (packet_started) {
             // Bytes destuffing and accumulating
             if(rx_byte == FESC) {
@@ -169,18 +169,25 @@ int Wakeproto::getpacket(QByteArray data) {
 
                 if (rx_crc_actual != getcrc(rx_temp_packet.left(rx_temp_packet.size()-1))) {
                     qDebug() << "[libwakeproto][ERROR]: CRC error: " << rx_crc_actual << " must be " << rx_crc_calculated;
+                    data_started = false;
+                    packet_started = 0;
+                    num_of_bytes = 0;
+                    byte_stuffing = 0;
+                    rx_temp_packet.clear();
+                    data.clear();
+                    return 1;
                 } else {
                     // TODO: Handle received packet
                     //dump_packet(rx_temp_packet);
                     emit packetReceived(rx_temp_packet);
+                    data_started = false;
+                    packet_started = 0;
+                    num_of_bytes = 0;
+                    byte_stuffing = 0;
+                    rx_temp_packet.clear();
+                    data.clear();
                     //process_packet(bytes.at(cmd), rx_data);
                 }
-                data_started = false;
-                packet_started = 0;
-                num_of_bytes = 0;
-                byte_stuffing = 0;
-                rx_temp_packet.clear();
-                data.clear();
             }
         } else if (rx_byte == FEND) {
             //qDebug() << "[libwakeproto][INFO]: Received FEND";

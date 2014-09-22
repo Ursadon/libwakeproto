@@ -65,7 +65,8 @@ void Test_libwakeproto::lwp_test_rx_continuous()
     }
     QCOMPARE( stateSpy.count(), 1 );
 }
-void Test_libwakeproto::lwp_test_rx_bruteforce()
+
+void Test_libwakeproto::lwp_test_rx_bruteforce_header()
 {
     Wakeproto *lwp = new Wakeproto;
     QSignalSpy stateSpy(lwp, SIGNAL( packetReceived(QByteArray) ) );
@@ -73,11 +74,27 @@ void Test_libwakeproto::lwp_test_rx_bruteforce()
     QVERIFY( stateSpy.isValid() );
     for (unsigned int i = 0; i < 256; i++) {
         for (unsigned int j = 0; j < 256; j++) {
-            packet = lwp->createpacket(j,i,"senddata");
-            if (lwp->getpacket(packet) == 1) {
+            packet = lwp->createpacket(j,i,"Testing data");
+            if (lwp->getpacket(packet) != 0) {
                 qDebug() << "j= " << j << " i= " << i << endl;
                 QFAIL("Error: CRC mismatch");
             }
+        }
+    }
+    QCOMPARE( stateSpy.count(), 256*256 );
+}
+
+void Test_libwakeproto::lwp_test_rx_bruteforce_data()
+{
+    Wakeproto *lwp = new Wakeproto;
+    QSignalSpy stateSpy(lwp, SIGNAL( packetReceived(QByteArray) ) );
+    QByteArray packet;
+    QVERIFY( stateSpy.isValid() );
+    for (unsigned int k = 0; k < 8*128; k++) {
+        packet = lwp->createpacket(100,100,QByteArray::number(k,10));
+        if (lwp->getpacket(packet) != 0) {
+            qDebug() << "k= " << k << endl;
+            QFAIL("Error: CRC mismatch");
         }
     }
     QCOMPARE( stateSpy.count(), 256*256 );

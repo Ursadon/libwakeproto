@@ -31,3 +31,4 @@ Makefile.*
 *.pro.user.*
 *-build-*
 *.autosave
+example/loopback/*.pro.user
